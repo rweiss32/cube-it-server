@@ -23,10 +23,10 @@ export default async function handler(req, res) {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-    
+
     // שימוש ב-Gemini 1.5 Flash - המודל הכי חסכוני ומהיר למשימות כאלו
     const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
+        model: "gemma-4-26b-a4b-it",
         generationConfig: {
             temperature: 0,
             maxOutputTokens: 10,
