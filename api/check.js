@@ -28,16 +28,20 @@ export default async function handler(req, res) {
     const model = genAI.getGenerativeModel({ 
         model: "gemma-4-26b-a4b-it",
         generationConfig: {
-            temperature: 0,
-            maxOutputTokens: 10,
+            temperature: 1,
+            maxOutputTokens: 15,
         }
     });
 
-    const prompt = `Answer with only one word: "yes" or "no". Does the word "${word}" belong to the category "${category}"? (Answer in Hebrew: "כן" or "לא")`;
+    const prompt = `Does the word "${word}" belong to the category "${category}"? Answer with one word only: yes or no.`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const answer = response.text().trim().replace(/[.,!]/g, "");
+    const raw = response.text().trim();
+
+    // Extract the last yes or no in the response (model may reason before answering)
+    const match = [...raw.matchAll(/\byes\b|\bno\b/gi)];
+    const answer = match.length > 0 ? match[match.length - 1][0].toLowerCase() : raw;
 
     return res.status(200).json({ answer });
 
