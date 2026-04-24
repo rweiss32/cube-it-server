@@ -39,10 +39,8 @@ export default async function handler(req, res) {
          </table>`
       : '';
 
-    const screenshotHtml = screenshot
-      ? `<h3 style="margin-top:24px;color:#4ecca3">צילום מסך</h3>
-         <img src="${screenshot}"
-              style="max-width:100%;border:1px solid #ddd;border-radius:8px;display:block" />`
+    const screenshotNote = screenshot
+      ? `<p style="margin-top:24px;color:#888;font-size:0.9em">📎 צילום מסך מצורף</p>`
       : '';
 
     const html = `
@@ -54,10 +52,14 @@ export default async function handler(req, res) {
           <h3 style="margin-top:0">${subject.replace(/</g, '&lt;')}</h3>
           <p style="white-space:pre-wrap;line-height:1.7">${description.replace(/</g, '&lt;')}</p>
           ${gameStateHtml}
-          ${screenshotHtml}
+          ${screenshotNote}
         </div>
       </div>
     `;
+
+    const attachments = screenshot
+      ? [{ filename: 'screenshot.jpg', content: screenshot.replace(/^data:image\/\w+;base64,/, '') }]
+      : [];
 
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
@@ -65,6 +67,7 @@ export default async function handler(req, res) {
       to: ['raviv.weiss@gmail.com'],
       subject: `[קוביאות] ${typeLabel}: ${subject}`,
       html,
+      attachments,
     });
 
     return res.status(200).json({ ok: true });
