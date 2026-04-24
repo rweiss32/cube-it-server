@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { type = 'feedback', subject, description, gameState, screenshot } = req.body;
+    const { type = 'feedback', name, subject, description, gameState, screenshot } = req.body;
 
     if (!subject || !description) {
       return res.status(400).json({ error: 'Missing subject or description' });
@@ -50,6 +50,7 @@ export default async function handler(req, res) {
         </div>
         <div style="border:1px solid #e0e0e0;border-top:none;padding:20px 24px;border-radius:0 0 12px 12px">
           <h3 style="margin-top:0">${subject.replace(/</g, '&lt;')}</h3>
+          ${name ? `<p style="color:#888;margin-top:-8px;font-size:0.9em">מאת: ${name.replace(/</g, '&lt;')}</p>` : ''}
           <p style="white-space:pre-wrap;line-height:1.7">${description.replace(/</g, '&lt;')}</p>
           ${gameStateHtml}
           ${screenshotNote}
